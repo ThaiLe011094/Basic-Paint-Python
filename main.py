@@ -1,9 +1,9 @@
-# This program is for testing only
-# Created by Thai Le
-
 def m_click(event):  # start mouse click event
     global x1, y1
     x1, y1 = event.x, event.y
+    if choice == 3:
+        dot_process()
+    return x1, y1
 
 
 def m_release(event):  # release mouse clicking event
@@ -56,27 +56,30 @@ def draw_dot():
 def draw_process():
     global choice
     if choice == 1:
-        can.create_rectangle(x1, y1, x2, y2, outline='red', fill='red')
+        can.create_rectangle(x1, y1, x2, y2, outline='red')
     if choice == 2:
-        can.create_oval(x1, y1, x2, y2, outline='red', fill='red')
-    if choice == 3:
-        dot_process()
+        can.create_oval(x1, y1, x2, y2, outline='red')
+    else:
+        pass
 
 
-def dot_process(event):  # Draw line with dot
+def dot_process():  # Draw line with dot
     global x1, y1, x_temp, y_temp
-    x1, y1 = event.x, event.y
     if x_temp != x1:
-        can.create_line(x1, y1, x2, y2, fill='red')
+        if x_temp != -1:
+            can.create_line(x1, y1, x_temp, y_temp, fill='red')
         x_temp = x1
     if y_temp != y1:
+        if y_temp != -1:
+            can.create_line(x1, y1, x_temp, y_temp, fill='red')
         y_temp = y1
+    return
 
 
 def clear():
-    global x1, y1, x2, y2
+    global x1, y1, x2, y2, x_temp, y_temp
     can.create_rectangle(0, 0, 500, 500, outline='dark grey', fill='dark grey')
-    x1, y1, x2, y2 = 0, 0, 0, 0
+    x1, y1, x2, y2, x_temp, y_temp = 0, 0, 0, 0, -1, -1
     print("Canvas has been cleared")
 
 
@@ -99,7 +102,7 @@ def window_exit():  # under construction - work but for luck
 
 
 # Main
-x, y, x1, y1, x2, y2, x_temp, y_temp, choice = 0, 0, 0, 0, 0, 0, 0, 0, None
+x, y, x1, y1, x2, y2, x_temp, y_temp, choice = 0, 0, 0, 0, 0, 0, -1, -1, None
 color = rand_color()
 master = Tk()
 # master.attributes('-disabled', True)
