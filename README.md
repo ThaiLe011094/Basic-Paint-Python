@@ -1,3 +1,3 @@
 # Basic-Paint
-Python basic
+Python basic/n
 Using tkinter for basic drawing
