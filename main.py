@@ -1,23 +1,27 @@
-def m_click(event):  # start mouse click event
+from tkinter import *
+import tkinter as tk
+from random import randrange
+from draw_process import draw_process
+
+
+def mouse_click_pos(event):
     global x1, y1
     x1, y1 = event.x, event.y
-    if choice == 3:
-        dot_process()
     return x1, y1
 
 
-def m_release(event):  # release mouse clicking event
-    global x1, y1, x2, y2
-    print("Mouse pos from (%s %s) to (%s %s)" % (x1, y1, event.x, event.y))
+def mouse_release_pos(event):
+    global x2, y2
     x2, y2 = event.x, event.y
-    draw_process()
+    pos = draw_process(x1, y1, x2, y2, choice, can, master)
+    pos.check_choice()
+    return x2, y2
 
 
-def m_log(event):  # logging mouse position
-    global x, y, x_temp, y_temp
+def mouse_pos(event):
+    global x, y
     x, y = event.x, event.y
-    pos_log.config(text="[%s %s]" % (x, y))
-    return
+    mouse_pos.config(text="[%s, %s]" % (x, y))
 
 
 def rand_color():
@@ -29,10 +33,19 @@ def rand_color():
     str_g2 = hex(randrange(0, 16))
     str_b1 = hex(randrange(0, 16))
     str_b2 = hex(randrange(0, 16))
-    color = "#"+str_r1[2:]+str_r2[2:]+str_g1[2:]+str_g2[2:]+str_b1[2:]+str_b2[2:]
+    color = "#" + str_r1[3:] + str_r2[3:] + str_g1[3:] + str_g2[3:] + str_b1[3:] + str_b2[3:]
     # [2:] = from pos 2nd to end, RGB color
     print(color)
     return color
+
+
+def clear():
+    global choice
+    choice = 0
+    clr = draw_process(x1, y1, x2, y2, choice, can, master)
+    clr.check_clear()
+    choice = None
+    print("Canvas cleared "+str(choice))
 
 
 def draw_rec():
@@ -53,41 +66,6 @@ def draw_dot():
     print("Draw Dot "+str(choice))
 
 
-def draw_process():
-    global choice
-    if choice == 1:
-        can.create_rectangle(x1, y1, x2, y2, outline='red')
-    if choice == 2:
-        can.create_oval(x1, y1, x2, y2, outline='red')
-    else:
-        pass
-
-
-def dot_process():  # Draw line with dot
-    global x1, y1, x_temp, y_temp
-    if x_temp != x1:
-        if x_temp != -1:
-            can.create_line(x1, y1, x_temp, y_temp, fill='red')
-        x_temp = x1
-    if y_temp != y1:
-        if y_temp != -1:
-            can.create_line(x1, y1, x_temp, y_temp, fill='red')
-        y_temp = y1
-    return
-
-
-def clear():
-    global x1, y1, x2, y2, x_temp, y_temp
-    can.create_rectangle(0, 0, 500, 500, outline='dark grey', fill='dark grey')
-    x1, y1, x2, y2, x_temp, y_temp = 0, 0, 0, 0, -1, -1
-    print("Canvas has been cleared")
-
-
-def input_size():  # Create Canvas size with user input
-    global x, y
-    x, y = input("Width"), input("Height")
-
-
 def window_exit():  # under construction - work but for luck
     try:
         master.destroy()
@@ -95,16 +73,13 @@ def window_exit():  # under construction - work but for luck
         master.destroy()
         print("System Error found")
         pass  # Do nothing
-    finally:
-        sys.exit()
-        master.destroy()
-        print("Unexpected error found")
 
 
 # Main
 x, y, x1, y1, x2, y2, x_temp, y_temp, choice = 0, 0, 0, 0, 0, 0, -1, -1, None
 color = rand_color()
 master = Tk()
+master.overrideredirect(1)
 # master.attributes('-disabled', True)
 can = Canvas(master, bg='dark grey', height=500, width=500)
 master.geometry("550x530+30+30")  # Size (Width*Height + W_offset + H_offset)
@@ -132,13 +107,13 @@ oval_but = Button(master, text='Dot', command=draw_dot)
 oval_but.place(x=504, y=79, width=45, height=25)
 
 # Main config
-can.bind('<Button-1>', m_click)
-can.bind('<ButtonRelease-1>', m_release)
-can.bind('<Motion>', m_log)
+can.bind('<Button-1>', mouse_click_pos)
+can.bind('<ButtonRelease-1>', mouse_release_pos)
+can.bind('<Motion>', mouse_pos)
 
-pos_log = tk.Label(master)
+mouse_pos = tk.Label(master)
 # master.title("My paint - "+str(pos_log))
-pos_log.place(x=10, y=505)
+mouse_pos.place(x=10, y=505)
 master.title("My paint")
 
 master.mainloop()
