@@ -2,8 +2,8 @@ from init import init
 
 
 class draw_process(init):
-    def __init__(self, x1, y1, x2, y2, choice, can, master):
-        init.__init__(self, x1, y1, x2, y2, choice, can, master)
+    def __init__(self, x1, y1, x2, y2, m_pos, choice, can, master):
+        init.__init__(self, x1, y1, x2, y2, m_pos, choice, can, master)
         print('draw_process received pos x1 = {}, y1 = {}, x2 = {}, y2 = {}'.format(self.x1, self.y1, self.x2, self.y2))
 
     def check_clear(self):
@@ -28,7 +28,7 @@ class draw_process(init):
                 init.ova_process(self)
             elif self.choice == 3:
                 print('Choice is 3')
-                print('Drawing Line')
+                print('Drawing Dot')
                 init.dot_process(self)
         except:
             pass
