@@ -10,11 +10,27 @@ def mouse_click_pos(event):
     return x1, y1
 
 
+def mouse_hold_pos(event):
+    global x3, y3, m_pos
+    x3, y3 = event.x, event.y
+    # print("length m_pos = %s" % len(m_pos))
+    if len(m_pos) == 0:
+        m_pos.append(x3)
+        m_pos.append(y3)
+    elif (x3 != m_pos[len(m_pos)-2]) or (y3 != m_pos[len(m_pos)-1]):
+        m_pos.append(x3)
+        m_pos.append(y3)
+    print(m_pos)
+    print("length m_pos = %s" % len(m_pos))
+    return m_pos
+
+
 def mouse_release_pos(event):
     global x2, y2
     x2, y2 = event.x, event.y
-    pos = draw_process(x1, y1, x2, y2, choice, can, master)
+    pos = draw_process(x1, y1, x2, y2, m_pos, choice, can, master)
     pos.check_choice()
+    clear_var()
     return x2, y2
 
 
@@ -42,10 +58,17 @@ def rand_color():
 def clear():
     global choice
     choice = 0
-    clr = draw_process(x1, y1, x2, y2, choice, can, master)
+    clr = draw_process(x1, y1, x2, y2, m_pos, choice, can, master)
     clr.check_clear()
     choice = None
+    clear_var()
     print("Canvas cleared "+str(choice))
+
+
+def clear_var():
+    global x, y, x1, y1, x2, y2, x3, y3, choice, m_pos
+    x, y, x1, y1, x2, y2, x3, y3, choice = 0, 0, 0, 0, 0, 0, 0, 0, None
+    m_pos = []
 
 
 def draw_rec():
@@ -76,7 +99,8 @@ def window_exit():  # under construction - work but for luck
 
 
 # Main
-x, y, x1, y1, x2, y2, x_temp, y_temp, choice = 0, 0, 0, 0, 0, 0, -1, -1, None
+x, y, x1, y1, x2, y2, x3, y3, choice = 0, 0, 0, 0, 0, 0, 0, 0, None
+m_pos = []
 color = rand_color()
 master = Tk()
 master.overrideredirect(1)
@@ -110,6 +134,7 @@ oval_but.place(x=504, y=79, width=45, height=25)
 can.bind('<Button-1>', mouse_click_pos)
 can.bind('<ButtonRelease-1>', mouse_release_pos)
 can.bind('<Motion>', mouse_pos)
+can.bind('<B1-Motion>', mouse_hold_pos)
 
 mouse_pos = tk.Label(master)
 # master.title("My paint - "+str(pos_log))
